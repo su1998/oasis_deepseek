@@ -1,0 +1,47 @@
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments
+from datasets import load_dataset
+
+# 모델 및 토크나이저 로드 (FP8 양자화 제거, GPU 최적화 적용)
+model_name = "deepseek-ai/deepseek-r1"
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    trust_remote_code=True,
+    torch_dtype=torch.float16,  # 🚀 FP16 적용 (메모리 최적화)
+    device_map="auto"  # 🚀 GPU 자동 할당
+)
+
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+
+# 데이터셋 로드 (JSONL 파일 로드)
+dataset = load_dataset("json", data_files="dataset.jsonl")
+
+# Fine-Tuning 설정 (메모리 최적화 적용)
+training_args = TrainingArguments(
+    output_dir="./fine_tuned_model",  # 모델 저장 경로
+    per_device_train_batch_size=1,  # 🚀 메모리 절약 (최적값: 1 또는 2)
+    gradient_accumulation_steps=8,  # 🚀 배치 크기를 가상적으로 늘려 메모리 절약
+    fp16=True,  # 🚀 FP16 활용 (메모리 절약 + 속도 향상)
+    optim="adamw_bnb_8bit",  # 🚀 8bit Adam 옵티마이저 사용 (메모리 절약)
+    num_train_epochs=3,  # 학습 에포크 수
+    save_steps=500,  # 저장 빈도
+    save_total_limit=2,  # 최대 저장 모델 개수
+    logging_dir="./logs",  # 로그 저장 경로
+    logging_steps=50,  # 로그 출력 빈도
+    evaluation_strategy="no",  # 평가 비활성화 (메모리 절약)
+    report_to="none",  # WandB 같은 로깅 툴 사용 안 함
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=dataset["train"],
+    tokenizer=tokenizer,
+)
+
+# 학습 시작
+trainer.train()
+
+# 모델 저장
+trainer.save_model("./fine_tuned_model")
+tokenizer.save_pretrained("./fine_tuned_model")
