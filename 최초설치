@@ -1,0 +1,195 @@
+🚀 1️⃣ Docker에서 Ubuntu 컨테이너 설치하기
+🔹 1. Docker Desktop 실행 및 Ubuntu 이미지 다운로드
+먼저, Docker Desktop을 실행한 후, Ubuntu 컨테이너를 실행하기 위해 공식 Ubuntu 이미지를 다운로드해야 해.
+
+터미널(CMD 또는 PowerShell)에서 아래 명령어를 입력:
+
+bash
+복사
+편집
+docker pull ubuntu:22.04
+👉 이 명령어는 Ubuntu 22.04 LTS 이미지를 다운로드한다.
+
+🔹 2. Ubuntu 컨테이너 실행 및 생성
+이제 Ubuntu 컨테이너를 실행하자. 다음 명령어를 입력:
+docker run -it --name su_ubuntu_container --gpus all --shm-size=32g --memory=50g --cpus=16 ubuntu:22.04 /bin/bash
+
+
+🚀 2️⃣ 컨테이너에서 필수 패키지 설치
+Ubuntu 컨테이너 내부에서 Ollama 및 Deepseek R1을 설치하기 위해 기본 패키지를 먼저 설치해야 해.
+
+🔹 1. 패키지 목록 업데이트
+bash
+복사
+편집
+
+apt update && apt upgrade -y
+🔹 2. 필수 패키지 설치
+bash
+복사
+편집
+apt install -y curl git wget nano build-essential
+📌 설명:
+
+curl → Ollama 설치에 필요
+git → 코드 관리용
+wget → 다운로드 도구
+nano → 간단한 텍스트 편집기
+build-essential → C++ 컴파일러 및 필수 빌드 도구
+
+🚀 3️⃣ 컨테이너를 백그라운드에서 실행하기
+지금까지 실행한 Ubuntu 컨테이너는 종료하면 사라지므로, 백그라운드에서 실행되도록 설정해보자.
+
+🔹 1. 현재 컨테이너에서 나가기
+컨테이너 내부에서 exit 입력하거나 Ctrl + D를 누르면 빠져나올 수 있어.
+
+🔹 2. 컨테이너를 백그라운드에서 실행
+bash
+복사
+편집
+docker start -ai su_ubuntu_container
+👉 이 명령어를 사용하면 컨테이너를 계속 유지하면서 다시 접속 가능!
+
+
+👉 이 명령어를 사용하면 컨테이너를 계속 유지하면서 다시 접속 가능!
+
+또는 완전히 백그라운드에서 실행하려면:
+
+bash
+복사
+편집
+docker start su_ubuntu_container
+docker exec -it su_
+ubuntu_container /bin/bash
+
+
+
+
+
+
+
+
+
+1️⃣ PowerShell에서 할 일 (관리자 권한)
+
+powershell
+복사
+편집
+wsl --shutdown
+👉 이 부분은 PowerShell에서 실행하면 OK! 이미 실행했으니 넘어가도 돼.
+
+2️⃣ Ubuntu 컨테이너 내부에서 실행해야 할 명령어 PowerShell이 아니라, Ubuntu 컨테이너 내부에서 실행해야 해.
+
+🔹 Ubuntu 컨테이너 내부로 들어가기
+PowerShell에서 다음 명령어 입력:
+
+powershell
+복사
+편집
+docker exec -it ubuntu_container /bin/bash
+👉 이 명령어를 실행하면 Ubuntu 컨테이너 내부로 진입할 수 있어.
+
+
+
+
+
+
+PS C:\Users\fruup> docker exec -it su_ubuntu_container /bin/bash
+root@a7cd8bb44e21:/#
+
+
+이후부터는 어떻게 진행해야 해?
+ChatGPT의 말:
+이제 Docker에서 실행 중인 Ubuntu 컨테이너 내부에 들어왔습니다.
+이제 Ollama 및 Deepseek R1 14B를 설치하고, RTX 4070을 활용한 학습 환경을 구성하는 작업을 진행합니다.
+
+🚀 1️⃣ Ubuntu 컨테이너 기본 설정
+컨테이너 내부에서 패키지를 업데이트하고 기본 도구들을 설치합니다.
+
+bash
+복사
+편집
+apt update && apt upgrade -y
+apt install -y curl git python3 python3-pip nano
+✅ Python 및 패키지 관리 도구가 설치됩니다.
+
+🚀 2️⃣ NVIDIA GPU 드라이버 및 CUDA 설정
+RTX 4070을 학습에 활용하려면 CUDA 및 NVIDIA 관련 라이브러리를 설치해야 합니다.
+
+(1) NVIDIA 드라이버 확인
+bash
+복사
+편집
+nvidia-smi
+✅ 정상적인 경우 다음과 같은 GPU 정보가 출력되어야 합니다.
+
+pgsql
+복사
+편집
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 530.41.03    Driver Version: 530.41.03    CUDA Version: 12.1     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
++-------------------------------+----------------------+----------------------+
+
+
+
+
+
+
+
+🚀 3️⃣ Ollama 설치
+이제 Ollama를 설치하여 Deepseek R1 14B 모델을 실행할 수 있도록 합니다.
+
+bash
+복사
+편집
+curl -fsSL https://ollama.com/install.sh | sh
+✅ 설치가 완료되면, 버전을 확인하세요.
+
+bash
+복사
+편집
+ollama --version
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
