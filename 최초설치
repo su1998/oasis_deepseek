@@ -360,6 +360,8 @@ docker exec -it ollama-webui /bin/bash
 
 
 
+docker exec -it su-open-webui /bin/bash
+curl http://host.docker.internal:11434/api/tags
 
 
 
