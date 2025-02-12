@@ -237,7 +237,31 @@ ghcr.io/open-webui/open-webui:main → Open WebUI 최신 버전 실행
 ✅ 실행 후 브라우저에서 http://localhost:3000 접속하면 WebUI가 열림.
 
 
+PS C:\Users\fruup> docker exec -it ollama-webui /bin/bash
+root@6217353f5426:/app/backend# curl http://host.docker.internal:11434/api/tags
+{"models":[{"name":"deepseek-r1:14b","model":"deepseek-r1:14b","modified_at":"2025-02-10T20:05:39.864969083+09:00","size":8988112040,"digest":"ea35dfe18182f635ee2b214ea30b7520fe1ada68da018f8b395b444b662d4f1a","details":{"parent_model":"","format":"gguf","family":"qwen2","families":["qwen2"],"parameter_size":"14.8B","quantization_level":"Q4_K_M"}}]}root@6217353f5426:/app/backend#
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+🔹 WebUI 컨테이너 내부로 접속
+
+powershell
+복사
+편집
+docker exec -it ollama-webui /bin/bash
 
 
 
